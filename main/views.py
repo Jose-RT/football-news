@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
 
 
 @login_required(login_url='/login')
@@ -98,6 +99,12 @@ def delete_news(request, id):
     news = get_object_or_404(News, pk=id)
     news.delete()
     return HttpResponseRedirect(reverse('main:show_main'))
+
+@csrf_exempt
+@require_POST
+def add_news_entry_ajax(request):
+    title = strip_tags(request.POST.get("title")) # strip HTML tags!
+    content = strip_tags(request.POST.get("content")) # strip HTML tags!
 
 def show_xml(request):
     news_list = News.objects.all()
